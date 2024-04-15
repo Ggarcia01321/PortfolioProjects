@@ -19,8 +19,8 @@ ORDER BY dept_no;
 SELECT * FROM public.departments_dup
 ORDER BY dept_no;
 
-#############################
 
+#############################
 -- Task Two: INNER JOIN
 -- In this task, you will retrieve data from the two 
 -- tables using INNER JOIN
