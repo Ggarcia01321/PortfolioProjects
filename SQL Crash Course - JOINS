@@ -1,0 +1,425 @@
+###############################################################
+###############################################################
+SQL Crash Course - JOINS
+###############################################################
+###############################################################
+
+
+###############################################################
+JOINS Overview  
+###############################################################
+
+
+# Joins are used to combine rows from two or more tables based
+# on a related column
+
+# There are several types of JOINS
+# INNER, OUTER FULL, RIGHT, LEFT, SELF JOIN, CROSS JOIN 
+
+-- EXAMPLE:
+# SELECT * 
+# FROM customers AS c
+# JOIN customer_orders AS co
+	# ON c.customer_id = co.customer_id
+
+
+###############################################################
+PRIMARY VS FOREIGN KEY
+###############################################################
+
+
+# Primary key is a column (or set of columns) that is used to identify each row in a uniquely 
+# table
+
+# A foreign key is a column (or set of columns) that refers to the 
+# primary key in another table (Foreign has duplicates)
+
+# Foreign key is used to establish a relationship between two tables to 
+# ensure referential integrity 
+
+
+###############################################################
+JOIN VS UNION
+###############################################################
+
+
+# A UNION is used to combine the results of two or more SELECT statements
+# into a single result set
+
+# JOINS typically give a horizontal output, while UNIONs give a vertical
+# output
+
+
+###############################################################
+INNER JOIN 
+###############################################################
+
+
+# An INNER JOIN in SQL is a type of join that returns the rows from both tables where there is a match based 
+# on the specified condition. If there is no match, no rows will be returned.
+
+SELECT column_name(s)
+FROM table1
+INNER JOIN table2
+ON table1.column_name = table2.column_name;
+
+
+SELECT * 
+FROM customers;
+
+SELECT * 
+FROM customer_orders;
+
+
+SELECT * 
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id
+ORDER BY co.customer_id;
+
+
+SELECT *
+FROM products;
+
+SELECT * 
+FROM customer_orders;
+
+
+SELECT p.product_name, p.product_id, co.order_total
+FROM products p
+JOIN customer_orders co
+	ON p.product_id = co.product_id;
+    
+# When the column is unique to a table in the JOIN statement, you 
+# You do not need to specify which table it came from.
+# For example: co.order_total
+# However, if the tables share the same column, you must specify 
+# from which column you are selecting it from. 
+
+
+SELECT p.product_name, p.product_id, SUM(co.order_total)
+FROM products p
+JOIN customer_orders co
+	ON p.product_id = co.product_id
+GROUP BY p.product_name, p.product_id;
+
+
+SELECT * 
+FROM suppliers;
+-- This is simply a reference table. 
+
+SELECT * 
+FROM ordered_items;
+
+
+SELECT *
+FROM suppliers s
+JOIN ordered_items oi
+	ON s.supplier_id = oi.shipper_id;
+
+
+###############################################################
+JOINING Multiple Tables
+###############################################################
+
+
+SELECT *
+FROM products p
+JOIN customer_orders co
+	ON p.product_id = co.product_id
+JOIN customers c
+	ON co.customer_id = c.customer_id;
+
+
+SELECT product_name, order_total, first_name
+FROM products p
+JOIN customer_orders co
+	ON p.product_id = co.product_id
+JOIN customers c
+	ON co.customer_id = c.customer_id;
+    
+    
+SELECT p.product_id, co.product_id, co.customer_id, c.customer_id
+FROM products p
+JOIN customer_orders co
+	ON p.product_id = co.product_id
+JOIN customers c
+	ON co.customer_id = c.customer_id;
+    
+    
+-- Practice Question 
+# Given these 3 tables (suppliers, ordered_items, customer_orders),
+# write a query to return the name of the supplier and the sum of 
+# total amount for each supplier
+
+SELECT * 
+FROM suppliers;
+
+SELECT *
+FROM ordered_items;
+
+SELECT * 
+FROM customer_orders;
+
+
+SELECT s.name, SUM(order_total) 
+FROM suppliers s
+JOIN ordered_items oi
+	ON s.supplier_id = oi.shipper_id
+JOIN customer_orders co
+	ON oi.order_id = co.order_id
+GROUP BY s.name; 
+
+
+###############################################################
+JOINING Multiple Tables
+###############################################################
+
+
+SELECT *
+FROM customer_orders co
+JOIN customer_orders_review cor
+	ON co.order_id = cor.order_id;
+# Generates 14 rows
+
+
+SELECT *
+FROM customer_orders co
+JOIN customer_orders_review cor
+	ON co.order_id = cor.order_id
+    AND co.customer_id = cor.customer_id; 
+# Generates 12 rows
+
+
+SELECT *
+FROM customer_orders co
+JOIN customer_orders_review cor
+	ON co.order_id = cor.order_id
+    AND co.customer_id = cor.customer_id
+    AND co.order_date = cor.order_date; 
+# Generates ten rows 
+# Sometimes, it may make sense to JOIN tables on more than one column.
+# Instead of JOINING on the Primary Key and Foreign Key
+
+
+###############################################################
+Outer Joins
+###############################################################
+
+
+# An OUTER JOIN in SQL is a join that returns all the rows from one table 
+# and the matched rows from another table. 
+# If there is no match, the result is NULL on the side of the table that doesn't have a match.
+
+LEFT OUTER JOIN
+
+SELECT column_name(s)
+FROM table1
+LEFT OUTER JOIN table2
+ON table1.column_name = table2.column_name;
+
+
+RIGHT OUTER JOIN 
+
+SELECT column_name(s)
+FROM table1
+RIGHT OUTER JOIN table2
+ON table1.column_name = table2.column_name;
+
+
+SELECT * 
+FROM customers c
+LEFT OUTER JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+# Want all rows in the customers table and all the rows that overlap
+# in the customer_orders table. 
+
+
+SELECT * 
+FROM customers c
+RIGHT OUTER JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+# Want all rows in the customer_orders table and all the rows that 
+# overlap in the customer table. 
+
+
+###############################################################
+Self Joins
+###############################################################
+
+
+# A SELF JOIN in SQL is a join where a table is joined to itself. 
+# It isn’t an actual built-in join like an INNER JOIN or OUTER JOIN, 
+# but rather a technique where you can join a table to itself as if it were two tables.
+
+SELECT a.column_name, b.column_name
+FROM table_name AS a
+JOIN table_name AS b
+ON a.common_field = b.common_field;
+
+
+-- Practice Question 
+# In the customer table, the person with the next highest Customer ID
+# is the that person's boss. Write a query to return the first and last
+# name of both the employee and their boss
+
+SELECT *
+FROM customers c1
+JOIN customers c2
+	ON c2.customer_id = c1.customer_id;
+# Self Join
+
+
+SELECT *
+FROM customers c1
+JOIN customers c2
+	ON c2.customer_id = c1.customer_id + 1;
+# Self Join with c2 customer_id being plus 1 of c1 customer_id
+    
+    
+SELECT c1.first_name, 
+c1.last_name,
+c2.first_name,
+c2.last_name
+FROM customers c1
+JOIN customers c2
+	ON c2.customer_id = c1.customer_id + 1;
+# Self Join with c2 customer_id being plus 1 of c1 customer_id and
+# first_name, last_name from c1 and c2 for the SELECT statement
+
+
+SELECT c1.customer_id,
+c1.first_name, 
+c1.last_name,
+c2.customer_id AS boss_id,
+c2.first_name AS boss_first_name,
+c2.last_name AS boss_last_name
+FROM customers c1
+JOIN customers c2
+	ON c1.customer_id = c2.customer_id - 1;
+# Self Join with c1 customer_id being minus 1 of c1 customer_id and
+# first_name, last_name from c1 and c2 for the SELECT statement
+
+
+
+###############################################################
+Cross/Cartesian  Joins
+###############################################################
+
+
+# Will join every row in the left table with every row in the 
+# right table. Cross joins don't require an ON statement
+
+SELECT *
+FROM customers;
+
+SELECT *
+FROM customer_orders;
+
+
+SELECT * 
+FROM customers c 
+CROSS JOIN customer_orders co
+ORDER BY c.customer_id;
+# Cross joins don't require an ON statement
+
+
+SELECT c.customer_id, 
+c.first_name, 
+co.order_id, 
+co.customer_id
+FROM customers c 
+CROSS JOIN customer_orders co
+ORDER BY c.customer_id;
+
+
+SELECT c.customer_id, 
+c.first_name, 
+co.order_id, 
+co.customer_id
+FROM customers c, customer_orders co
+ORDER BY c.customer_id;
+# You don't need to specify CROSS JOIN. Instead, you can add a comma (,)
+# after the first table then, include the second table to establish a 
+# CROSS JOIN. 
+
+
+###############################################################
+Unions & Union ALL
+###############################################################
+
+
+# The UNION operator in SQL combines the result sets of two or more SELECT statements. 
+# However, it only includes distinct values.
+
+UNION Syntax:
+
+SELECT sale_id, product_id, sale_amount
+FROM sales_2022
+UNION
+SELECT sale_id, product_id, sale_amount
+FROM sales_2023;
+
+
+# The UNION ALL operator does the same but includes duplicates.
+
+SELECT sale_id, product_id, sale_amount
+FROM sales_2022
+UNION ALL
+SELECT sale_id, product_id, sale_amount
+FROM sales_2023;
+
+
+SELECT * 
+FROM customers;
+-- UNION
+SELECT *
+FROM products;
+# Both tables must have the same number of columns. 
+
+
+SELECT first_name, last_name
+FROM customers
+UNION
+SELECT product_id, product_name
+FROM products;
+# Each select statement has two columns, which will work for the UNION.
+# It is best practice not to mix columns with different data types with 
+# a UNION.
+
+
+SELECT customer_id, first_name, 'OLD' AS Label
+FROM customers
+WHERE birth_date < '1950-01-01'
+UNION
+SELECT c.customer_id, c.first_name, 'Good Tipper'
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id
+WHERE tip > 4;
+
+
+SELECT customer_id, first_name, 'OLD' AS Label
+FROM customers
+WHERE birth_date < '1950-01-01'
+UNION
+SELECT customer_id, first_name, 'OLD' AS Label
+FROM customers
+WHERE birth_date < '1950-01-01';
+# Outputs 3 rows
+# UNION by default is UNION DISTINCT. It will not be considered duplicates. 
+# To keep the duplicates, instead of UNION, you must use UNION ALL
+
+
+SELECT customer_id, first_name, 'OLD' AS Label
+FROM customers
+WHERE birth_date < '1950-01-01'
+UNION ALL
+SELECT customer_id, first_name, 'OLD' AS Label
+FROM customers
+WHERE birth_date < '1950-01-01';
+# Outputs 6 rows
+# UNION ALL will consider duplicates 
+
+
+
