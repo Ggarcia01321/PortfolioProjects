@@ -1,0 +1,218 @@
+###############################################################
+###############################################################
+SQL Crash Course - Review Information 
+###############################################################
+###############################################################
+
+
+###############################################################
+WHERE AND ORDER BY CLAUSE
+###############################################################
+
+USE bakery;
+
+SELECT * 
+FROM bakery.customers;
+
+SELECT * 
+FROM bakery.customers
+WHERE first_name = 'Frodo'; 
+
+SELECT * FROM bakery.customers
+WHERE customer_id = 100104;
+
+SELECT * 
+FROM bakery.customers
+WHERE birth_date > '1995-01-01'
+ORDER BY birth_date DESC; 
+
+SELECT * 
+FROM bakery.customers
+WHERE birth_date > '1995-01-01'
+ORDER BY total_money_spent DESC; 
+
+SELECT * 
+FROM bakery.customers
+WHERE birth_date > '1995-01-01'
+ORDER BY total_money_spent DESC
+LIMIT 2; 
+
+
+###############################################################
+SELECT Statement
+###############################################################
+
+USE bakery;
+
+SELECT *
+FROM customers;
+
+SELECT first_name, 
+last_name, 
+phone,
+total_money_spent,
+(total_money_spent + 100) * 10
+FROM customers
+WHERE first_name = 'Kelly';
+
+SELECT DISTINCT(state)
+FROM customers;
+
+
+-- Practice Question: 
+-- Using the customers table, write a query 
+-- to show the phone numbers of all
+-- customer who live in Texas (TX)
+
+SELECT phone
+FROM customers
+WHERE state = 'TX';
+
+
+###############################################################
+WHERE STATEMENT
+###############################################################
+
+USE bakery;
+
+SELECT * 
+FROM customers
+WHERE first_name != 'Kevin';
+
+SELECT * 
+FROM customers
+WHERE first_name <> 'Kevin';
+
+SELECT * 
+FROM customers
+WHERE NOT first_name = 'Kevin';
+
+SELECT * 
+FROM customers
+WHERE total_money_spent > 1009;
+
+SELECT * 
+FROM customers
+WHERE total_money_spent >= 1009;
+
+SELECT * 
+FROM customers
+WHERE total_money_spent < 1009;
+
+SELECT * 
+FROM customers
+WHERE total_money_spent <= 1009;
+
+
+###############################################################
+Logical operators (AND, OR, NOT)
+###############################################################
+
+SELECT * 
+FROM customers
+WHERE total_money_spent <= 1009 AND state = 'TX';
+
+SELECT * 
+FROM customers
+WHERE total_money_spent <= 1009 OR state = 'TX';
+
+SELECT * 
+FROM customers
+WHERE (total_money_spent <= 1009) OR (state = 'TX');
+
+SELECT * 
+FROM customers
+WHERE (total_money_spent <= 1009) OR (state = 'TX');
+
+SELECT * 
+FROM customers
+WHERE (birth_date < '1995-01-01' OR state = 'PA') AND state = 'NY';
+
+SELECT * 
+FROM customers
+WHERE (birth_date < '1995-01-01' OR state = 'PA') AND state = 'NY';
+
+SELECT * 
+FROM customers
+WHERE NOT birth_date < '1995-01-01';
+
+-- Practice Question
+-- Using the employees table, write a query to show the employee ID
+-- first and last name, and salary of employees that make more that 
+-- 45k in the bakery department
+
+
+SELECT * 
+FROM employees;
+
+SELECT employee_id,
+first_name,
+last_name, 
+salary
+FROM employees 
+WHERE salary > 45000 AND department = 'bakery';
+
+
+###############################################################
+IN Operator
+###############################################################
+
+
+SELECT * 
+FROM customers; 
+
+SELECT * 
+FROM customers
+WHERE state IN ('PA', 'TX', 'CA');
+
+SELECT * 
+FROM customers
+WHERE state = 'PA' OR state = 'TX' OR state = 'CA'; 
+
+SELECT * 
+FROM customers
+WHERE first_name IN ('Kevin', 'Kelly'); 
+
+
+###############################################################
+Between Operator 
+###############################################################
+
+SELECT * 
+FROM customers 
+WHERE total_money_spent BETWEEN 534 AND 1009
+ORDER BY total_money_spent;
+
+SELECT * 
+FROM customers 
+WHERE total_money_spent >= 534 AND total_money_spent <= 1009
+ORDER BY total_money_spent;
+
+SELECT * 
+FROM customers 
+WHERE total_money_spent BETWEEN 1009 AND 534
+ORDER BY total_money_spent;
+-- Result in rows 
+
+SELECT * 
+FROM customers 
+WHERE total_money_spent >=  1009 AND total_money_spent <= 534
+ORDER BY total_money_spent;
+-- Result in rows 
+
+SELECT * 
+FROM customers
+WHERE birth_date BETWEEN '1990-01-01' AND '2020-01-01';
+
+SELECT * 
+FROM customers
+WHERE first_name BETWEEN 'Charles' AND 'Obi';
+
+
+-- Practice Question 
+-- Using the products table, select the name of the 
+-- product where the sale price is between $1.25 and $3
+
+SELECT * 
+FROM products
+WHERE sale_price BETWEEN 1.25 AND 3; 
