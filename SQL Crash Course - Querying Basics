@@ -1,6 +1,6 @@
 ###############################################################
 ###############################################################
-SQL Crash Course - Review Information 
+SQL Crash Course - Querying Basics
 ###############################################################
 ###############################################################
 
@@ -244,3 +244,104 @@ WHERE first_name BETWEEN 'Charles' AND 'Obi';
 SELECT * 
 FROM products
 WHERE sale_price BETWEEN 1.25 AND 3; 
+
+
+###############################################################
+LIKE Operator
+###############################################################
+
+-- % (Represents 0, 1, or infinite)
+-- _  (Represents 1) 
+
+SELECT * 
+FROM customers
+WHERE first_name LIKE 'K%n';
+-- K%n Starts with K and ends with n
+
+SELECT * 
+FROM customers
+WHERE first_name LIKE '%n';
+-- %n Ends with n
+
+SELECT * 
+FROM customers
+WHERE first_name LIKE '%in';
+-- %In Ends with In
+
+SELECT * 
+FROM customers
+WHERE first_name LIKE '%k%';
+-- %k% Can start with anything and end with anything
+-- but must have the letter k somewhere in between
+
+SELECT * 
+FROM customers
+WHERE first_name LIKE 'm_____';
+-- m_____ Starts with m but each _ is a letter
+-- must go after it
+
+SELECT * 
+FROM customers
+WHERE first_name LIKE 'Do_';
+-- Do_ generates Don as the _ fills for the n
+
+SELECT * 
+FROM customers
+WHERE last_name Like 'S______%';
+
+SELECT * 
+FROM customers
+WHERE phone Like '9%';
+
+###############################################################
+ORDER BY
+###############################################################
+
+-- Order by automatically orders rows in Ascending order
+-- DESC at the end of the order by clause will order 
+-- rows in descending order
+
+SELECT *
+FROM customers
+ORDER BY first_name; 
+
+SELECT *
+FROM customers
+ORDER BY first_name DESC; 
+
+SELECT state, total_money_spent
+FROM customers
+ORDER BY state DESC, total_money_spent; 
+-- You can decide whether to include DESC 
+-- for each column ordered by
+
+SELECT state, total_money_spent
+FROM customers
+ORDER BY state DESC, total_money_spent DESC;
+-- The query will first order by state and then
+-- total_money_spent second
+
+SELECT *
+FROM customers
+ORDER BY 8 DESC, 9 DESC;
+-- Each column in a table can be represented by a number
+-- for example, the first column (customer_id) can
+-- be referred to as 1 in the order by clause.
+-- This is not a best practice.
+
+SELECT customer_id, last_name, state, total_money_spent
+FROM customers
+ORDER BY 8 DESC, 9 DESC;
+-- This query will result in an error as there are only 
+-- four columns but we are using the order by for columns
+-- 8 and 9.
+
+SELECT customer_id, last_name, state, total_money_spent
+FROM customers
+ORDER BY state DESC, total_money_spent DESC
+-- This query will work
+
+
+
+
+
