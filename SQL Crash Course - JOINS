@@ -422,4 +422,15 @@ WHERE birth_date < '1950-01-01';
 # UNION ALL will consider duplicates 
 
 
+SELECT * 
+FROM animals_main am
+UNION
+SELECT *
+FROM animals_secondary sec
+[ORDER BY animal;]
+
+# ORDER BY statement is included at the end of the query
+  
+
+
 
