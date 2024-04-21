@@ -110,6 +110,34 @@ Logical operators (AND, OR, NOT)
 
 SELECT * 
 FROM customers
+WHERE first_name != 'Kevin';
+
+SELECT * 
+FROM customers
+WHERE first_name <> 'Kevin';
+
+SELECT * 
+FROM customers
+WHERE NOT first_name = 'Kevin';
+
+SELECT * 
+FROM customers
+WHERE total_money_spent > 1009;
+
+SELECT * 
+FROM customers
+WHERE total_money_spent >= 1009;
+
+SELECT * 
+FROM customers
+WHERE total_money_spent < 1009;
+
+SELECT * 
+FROM customers
+WHERE total_money_spent <= 1009;
+
+SELECT * 
+FROM customers
 WHERE total_money_spent <= 1009 AND state = 'TX';
 
 SELECT * 
