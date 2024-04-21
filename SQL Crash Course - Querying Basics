@@ -14,22 +14,27 @@ USE bakery;
 SELECT * 
 FROM bakery.customers;
 
+
 SELECT * 
 FROM bakery.customers
 WHERE first_name = 'Frodo'; 
 
+
 SELECT * FROM bakery.customers
 WHERE customer_id = 100104;
+
 
 SELECT * 
 FROM bakery.customers
 WHERE birth_date > '1995-01-01'
 ORDER BY birth_date DESC; 
 
+
 SELECT * 
 FROM bakery.customers
 WHERE birth_date > '1995-01-01'
 ORDER BY total_money_spent DESC; 
+
 
 SELECT * 
 FROM bakery.customers
@@ -75,29 +80,36 @@ WHERE STATEMENT
 
 USE bakery;
 
+
 SELECT * 
 FROM customers
 WHERE first_name != 'Kevin';
+
 
 SELECT * 
 FROM customers
 WHERE first_name <> 'Kevin';
 
+
 SELECT * 
 FROM customers
 WHERE NOT first_name = 'Kevin';
+
 
 SELECT * 
 FROM customers
 WHERE total_money_spent > 1009;
 
+
 SELECT * 
 FROM customers
 WHERE total_money_spent >= 1009;
 
+
 SELECT * 
 FROM customers
 WHERE total_money_spent < 1009;
+
 
 SELECT * 
 FROM customers
@@ -112,21 +124,26 @@ SELECT *
 FROM customers
 WHERE first_name != 'Kevin';
 
+
 SELECT * 
 FROM customers
 WHERE first_name <> 'Kevin';
+
 
 SELECT * 
 FROM customers
 WHERE NOT first_name = 'Kevin';
 
+
 SELECT * 
 FROM customers
 WHERE total_money_spent > 1009;
 
+
 SELECT * 
 FROM customers
 WHERE total_money_spent >= 1009;
+
 
 SELECT * 
 FROM customers
@@ -136,29 +153,36 @@ SELECT *
 FROM customers
 WHERE total_money_spent <= 1009;
 
+
 SELECT * 
 FROM customers
 WHERE total_money_spent <= 1009 AND state = 'TX';
+
 
 SELECT * 
 FROM customers
 WHERE total_money_spent <= 1009 OR state = 'TX';
 
-SELECT * 
-FROM customers
-WHERE (total_money_spent <= 1009) OR (state = 'TX');
 
 SELECT * 
 FROM customers
 WHERE (total_money_spent <= 1009) OR (state = 'TX');
 
+
 SELECT * 
 FROM customers
-WHERE (birth_date < '1995-01-01' OR state = 'PA') AND state = 'NY';
+WHERE (total_money_spent <= 1009) OR (state = 'TX');
+
 
 SELECT * 
 FROM customers
 WHERE (birth_date < '1995-01-01' OR state = 'PA') AND state = 'NY';
+
+
+SELECT * 
+FROM customers
+WHERE (birth_date < '1995-01-01' OR state = 'PA') AND state = 'NY';
+
 
 SELECT * 
 FROM customers
@@ -172,6 +196,7 @@ WHERE NOT birth_date < '1995-01-01';
 
 SELECT * 
 FROM employees;
+
 
 SELECT employee_id,
 first_name,
@@ -189,13 +214,16 @@ IN Operator
 SELECT * 
 FROM customers; 
 
+
 SELECT * 
 FROM customers
 WHERE state IN ('PA', 'TX', 'CA');
 
+
 SELECT * 
 FROM customers
 WHERE state = 'PA' OR state = 'TX' OR state = 'CA'; 
+
 
 SELECT * 
 FROM customers
@@ -206,15 +234,18 @@ WHERE first_name IN ('Kevin', 'Kelly');
 Between Operator 
 ###############################################################
 
+
 SELECT * 
 FROM customers 
 WHERE total_money_spent BETWEEN 534 AND 1009
 ORDER BY total_money_spent;
 
+
 SELECT * 
 FROM customers 
 WHERE total_money_spent >= 534 AND total_money_spent <= 1009
 ORDER BY total_money_spent;
+
 
 SELECT * 
 FROM customers 
@@ -222,15 +253,18 @@ WHERE total_money_spent BETWEEN 1009 AND 534
 ORDER BY total_money_spent;
 -- Result in rows 
 
+
 SELECT * 
 FROM customers 
 WHERE total_money_spent >=  1009 AND total_money_spent <= 534
 ORDER BY total_money_spent;
 -- Result in rows 
 
+
 SELECT * 
 FROM customers
 WHERE birth_date BETWEEN '1990-01-01' AND '2020-01-01';
+
 
 SELECT * 
 FROM customers
@@ -240,6 +274,7 @@ WHERE first_name BETWEEN 'Charles' AND 'Obi';
 -- Practice Question 
 -- Using the products table, select the name of the 
 -- product where the sale price is between $1.25 and $3
+
 
 SELECT * 
 FROM products
@@ -253,20 +288,24 @@ LIKE Operator
 -- % (Represents 0, 1, or infinite)
 -- _  (Represents 1) 
 
+
 SELECT * 
 FROM customers
 WHERE first_name LIKE 'K%n';
 -- K%n Starts with K and ends with n
+
 
 SELECT * 
 FROM customers
 WHERE first_name LIKE '%n';
 -- %n Ends with n
 
+
 SELECT * 
 FROM customers
 WHERE first_name LIKE '%in';
 -- %In Ends with In
+
 
 SELECT * 
 FROM customers
@@ -274,24 +313,29 @@ WHERE first_name LIKE '%k%';
 -- %k% Can start with anything and end with anything
 -- but must have the letter k somewhere in between
 
+
 SELECT * 
 FROM customers
 WHERE first_name LIKE 'm_____';
 -- m_____ Starts with m but each _ is a letter
 -- must go after it
 
+
 SELECT * 
 FROM customers
 WHERE first_name LIKE 'Do_';
 -- Do_ generates Don as the _ fills for the n
 
+
 SELECT * 
 FROM customers
 WHERE last_name Like 'S______%';
 
+
 SELECT * 
 FROM customers
 WHERE phone Like '9%';
+
 
 ###############################################################
 ORDER BY
@@ -301,13 +345,16 @@ ORDER BY
 -- DESC at the end of the order by clause will order 
 -- rows in descending order
 
+
 SELECT *
 FROM customers
 ORDER BY first_name; 
 
+
 SELECT *
 FROM customers
 ORDER BY first_name DESC; 
+
 
 SELECT state, total_money_spent
 FROM customers
@@ -315,11 +362,13 @@ ORDER BY state DESC, total_money_spent;
 -- You can decide whether to include DESC 
 -- for each column ordered by
 
+
 SELECT state, total_money_spent
 FROM customers
 ORDER BY state DESC, total_money_spent DESC;
 -- The query will first order by state and then
 -- total_money_spent second
+
 
 SELECT *
 FROM customers
@@ -329,6 +378,7 @@ ORDER BY 8 DESC, 9 DESC;
 -- be referred to as 1 in the order by clause.
 -- This is not a best practice.
 
+
 SELECT customer_id, last_name, state, total_money_spent
 FROM customers
 ORDER BY 8 DESC, 9 DESC;
@@ -336,12 +386,114 @@ ORDER BY 8 DESC, 9 DESC;
 -- four columns but we are using the order by for columns
 -- 8 and 9.
 
+
 SELECT customer_id, last_name, state, total_money_spent
 FROM customers
 ORDER BY state DESC, total_money_spent DESC
 -- This query will work
 
 
+###############################################################
+LIMIT 
+###############################################################
+
+SELECT * 
+FROM customers
+LIMIT 5; 
+-- Limits the number of records from the database to the 
+-- specified number
+
+
+SELECT * 
+FROM customers
+WHERE total_money_spent > 8000
+LIMIT 5; 
+-- Query only generates one output
+
+
+SELECT * 
+FROM customers
+WHERE total_money_spent < 8000
+LIMIT 5; 
+-- Generates first 5 values less than 8000
+
+
+SELECT * 
+FROM customers
+WHERE total_money_spent < 8000
+ORDER BY total_money_spent DESC
+LIMIT 5; 
+-- Generates first 5 values based on the order by 
+
+
+SELECT * 
+FROM customers
+WHERE total_money_spent < 8000
+ORDER BY total_money_spent DESC
+LIMIT 3,2;
+-- Start at position 3 and returns 2 rows after that.
+-- Went to the third positon of the output and then
+-- took the next two rows
+
+
+-- Practice Question 
+-- Using the customers table, write a query to show 
+-- the top 2 customers by money spent
+
+
+SELECT * 
+FROM customers
+ORDER BY total_money_spent DESC
+LIMIT 2; 
+
+
+###############################################################
+CASE STATEMENTS
+###############################################################
+
+
+SELECT *, 
+CASE 
+	WHEN units_in_stock < 20 THEN 'Order more now! '
+    WHEN units_in_stock BETWEEN 21 AND 50 THEN 'Check back next week'
+    WHEN units_in_stock > 50 THEN 'All good my friend'
+END AS Label
+FROM products; 
+
+
+SELECT *, 
+CASE 
+	WHEN units_in_stock < 20 THEN 'Order more now! '
+    WHEN units_in_stock BETWEEN 21 AND 50 THEN 'Check back next week'
+    ELSE 'All good my friend'
+END AS Label
+FROM products; 
+-- For the last CASE condition, for all variables not specified,
+-- you can use ELSE 
+
+
+SELECT *, 
+CASE 
+	WHEN units_in_stock < 20 THEN 'Order more now!'
+    WHEN units_in_stock > 50 THEN 'Check back next week'
+    WHEN units_in_stock > 100 THEN 'All good my friend'
+END AS Label
+FROM products; 
+-- Redundant logic for the second and third logical statements
+-- The third logical statement will never be reached
+
+
+-- Practice Question
+-- Using the table customer_orders, if a customer tipped 2 dollars 
+-- or more give them a 10% discount. Make this a new column called
+-- "discounted total" to compare to the original order amount.
+
+
+SELECT *,
+CASE 
+	WHEN tip >= 2 THEN ROUND(order_total * 0.9, 2) 
+END AS discounted_total
+FROM customer_orders; 
 
 
 
