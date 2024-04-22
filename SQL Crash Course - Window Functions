@@ -1,0 +1,284 @@
+###############################################################
+###############################################################
+SQL Crash Course - Window Functions
+###############################################################
+###############################################################
+
+
+# A Window Function is a function that performs a calculation across a set of rows that are related to the current row
+# Similar to an aggregate function, but a window function does not cause rows to group into a single output row 
+# Functions are applied to each row individually, and the result is displayed in a separate output column.
+
+
+OVER Clause:
+
+# The OVER clause defines a window or set of rows within the query result set. 
+# A window function then computes a value for each row in the window. 
+# You can think of it as a moving or sliding window for each row.
+
+
+PARTITION BY:
+
+# The PARTITION BY clause divides the result set produced by the FROM clause into partitions to
+# which the window function is applied. In other words, it creates a 'window' for each set of rows sharing
+# the same values of the PARTITION BY clause.
+
+
+###############################################################
+Over() & Partition by 
+###############################################################
+
+
+SELECT c.customer_id, first_name, order_total, MAX(order_total)
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id
+GROUP BY c.customer_id, first_name, order_total;
+# Does not generate the desired output. We are looking to compare 
+# the order_totals for the customer with their max order_total
+
+
+SELECT c.customer_id, 
+first_name, 
+order_total, 
+MAX(order_total) OVER(PARTITION BY first_name) AS max_order_total
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+# OVER() will generate a new column 
+# OVER (PARTITION BY (column name) will create a new column
+# and separate by a designed column name 
+
+
+SELECT c.customer_id, 
+first_name, 
+order_total, 
+MAX(order_total) OVER(PARTITION BY customer_id ORDER BY first_name) 
+AS max_order_total
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+# You can include OVER BY within the OVER() function 
+
+
+SELECT c.customer_id, 
+first_name, 
+order_total, 
+AVG(order_total) OVER(PARTITION BY customer_id ORDER BY first_name) 
+AS max_order_total
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+    
+    
+-- PRACTICE QUESTION
+# Given the orders table, provide a rolling sum of purchases each 
+# The customer has purchased from the smallest to the largest.
+# Give the customer ID, order total, and rolling order total called
+# "Rolling_Total"
+
+SELECT *
+FROM customer_orders;
+
+SELECT customer_id, 
+order_total,
+SUM(order_total) OVER(PARTITION BY customer_id ORDER BY order_total)
+AS Rolling_Total
+FROM customer_orders; 
+
+
+###############################################################
+Over() & Partition by 
+###############################################################
+
+
+SELECT c.customer_id, first_name, order_total, MAX(order_total)
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id
+GROUP BY c.customer_id, first_name, order_total;
+# Does not generate the desired output. We are looking to compare 
+# the order_totals for the customer with their max order_total
+
+
+SELECT c.customer_id, 
+first_name, 
+order_total, 
+MAX(order_total) OVER(PARTITION BY first_name) AS max_order_total
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+# OVER() will generate a new column 
+# OVER (PARTITION BY (column name) will create a new column
+# and separate by a designed column name 
+
+
+SELECT c.customer_id, 
+first_name, 
+order_total, 
+MAX(order_total) OVER(PARTITION BY customer_id ORDER BY first_name) 
+AS max_order_total
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+# You can include OVER BY within the OVER() function 
+
+
+SELECT c.customer_id, 
+first_name, 
+order_total, 
+AVG(order_total) OVER(PARTITION BY customer_id ORDER BY first_name) 
+AS max_order_total
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+    
+    
+-- PRACTICE QUESTION
+# Given the orders table, provide a rolling sum of purchases each 
+# The customer has purchased from the smallest to the largest.
+# Give the customer ID, order total, and rolling order total called
+# "Rolling_Total"
+
+SELECT *
+FROM customer_orders;
+
+SELECT customer_id, 
+order_total,
+SUM(order_total) OVER(PARTITION BY customer_id ORDER BY order_total)
+AS Rolling_Total
+FROM customer_orders; 
+
+
+
+###############################################################
+Row_NUMBER
+###############################################################
+
+
+SELECT c.customer_id,
+first_name,
+order_total, 
+AVG(order_total) OVER(PARTITION BY first_name ORDER BY first_name)
+AS Avg_Total
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+    
+    
+SELECT c.customer_id,
+first_name,
+order_total, 
+ROW_NUMBER () OVER()
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+-- Generates a unique number for each row starting from one. 
+
+
+SELECT c.customer_id,
+first_name,
+order_total, 
+ROW_NUMBER () OVER(PARTITION BY first_name ORDER BY order_total DESC)
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id;
+    
+
+-- PRACTICE QUESTION 
+# SELECT ROW_NUMBER 1 for each order_total in the above query
+
+SELECT * 
+FROM (
+SELECT c.customer_id,
+first_name,
+order_total, 
+ROW_NUMBER () OVER(PARTITION BY first_name ORDER BY order_total DESC) 
+AS row_num
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id
+    ) row_table
+WHERE row_num = 1;
+# Create a derived table of the above table and include a WHERE Clause
+
+
+###############################################################
+RANK() and DENSE_RANK()
+###############################################################
+
+
+# RANK() and DENSE_RANK() are both SQL window functions that assign a unique rank to each row within a partition of a result set.
+
+# RANK() function assigns a unique rank to each distinct row within a partition but leaves gaps in the ranking for tied rows.
+# If two (or more) rows tie for a rank, each tied row receives the same rank, and then the next rank in the sequence is skipped.
+# For example, if two rows tie for rank 1, RANK() gives both rows a rank of 1, but the next row receives a rank of 3.
+
+# DENSE_RANK() function also assigns a unique rank to each distinct row within a partition, but unlike RANK(), 
+# it does not skip any ranks. If two (or more) rows tie for a rank, each tied rows receives the same rank,
+# and the next row receives the next rank in the sequence. For example, if two rows tie for rank 1, 
+# DENSE_RANK() gives both rows a rank of 1, and the next row receives a rank of 2.
+
+
+SELECT *,
+RANK() OVER(PARTITION BY department ORDER BY salary)
+FROM employees;
+# Using RANK() OVER()
+
+
+SELECT *,
+RANK() OVER(PARTITION BY department ORDER BY salary) AS rank_column,
+DENSE_RANK() OVER(PARTITION BY department ORDER BY salary) AS dense_rank_col,
+ROW_NUMBER() OVER(PARTITION BY department ORDER BY salary) AS row_num
+FROM employees;
+# Using DENSE_RANK() OVER()
+
+SELECT *
+FROM (
+SELECT *,
+RANK() OVER(PARTITION BY department ORDER BY salary) AS rank_column,
+DENSE_RANK() OVER(PARTITION BY department ORDER BY salary) AS dense_rank_col,
+ROW_NUMBER() OVER(PARTITION BY department ORDER BY salary) AS row_num
+FROM employees
+) a 
+WHERE rank_column = 3;
+
+
+###############################################################
+LAG & LEAD 
+###############################################################
+
+
+# LAG() and LEAD() are window functions in SQL that provide a way to access data from a different row in the same result 
+# set without using a self-join. They are often used in data analysis to compare the current row with the previous or next row.
+
+# LAG() function fetches the value from a row that is a certain number of rows before the current row within the same result set.
+# It's useful when you want to compare a value in a row with a value in a preceding row.
+
+# LEAD() function fetches the value from a row that is a certain number of rows after the current row within the same result set.
+
+
+SELECT *, 
+LAG(salary) OVER(PARTITION BY department ORDER BY salary)
+FROM employees; 
+# In the LAG() function, you need to specify a column 
+# For example, LAG(department), LAG(title), LAG(salary)
+
+
+SELECT *, 
+LAG(salary) OVER(PARTITION BY department ORDER BY salary) AS lags,
+LEAD(salary) OVER(PARTITION BY department ORDER BY salary) AS leads
+FROM employees; 
+
+SELECT *,
+CASE
+	WHEN salary < lags THEN 'Less'
+    WHEN salary = lags THEN 'Equal'
+    ELSE 'More'
+END AS salary_check
+FROM (
+SELECT *,
+LAG(salary) OVER(PARTITION BY department ORDER BY employee_id) AS lags
+FROM employees
+) a; 
+
