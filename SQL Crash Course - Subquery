@@ -1,0 +1,308 @@
+###############################################################
+###############################################################
+SQL Crash Course - Subquery
+###############################################################
+###############################################################
+
+
+###############################################################
+Subquery Introduction
+###############################################################
+
+# Subquery is a SELECT statement that is nested within another query
+# Returns an output that is used by the "outer" query
+
+
+SELECT 
+	order_id,
+	order_date, 
+	customer_id 
+FROM sales.order
+WHERE 
+	customer_id IN (
+		SELECT 
+			customer_id
+		FROM
+			sales.customers
+		WHERE
+			city = 'New York'
+	)
+ORDER BY 
+	order_date DESC; 
+    
+    
+SELECT Emp_Name
+FROM Employees
+WHERE Employee_ID NOT IN
+		(SELECT Employee_ID
+		FROM Test)
+
+
+###############################################################
+Subquery Basics
+###############################################################
+
+
+SELECT * 
+FROM customers
+WHERE customer_id IN 
+	(SELECT DISTINCT customer_id
+    FROM customer_orders
+    WHERE tip > 2);
+# The inner subquery filters the results of the outer subquery.
+# For the above query, we are checking if the customer_id in 
+# the customers table is in the customer_orders 
+
+
+SELECT * 
+FROM customers
+WHERE customer_id IN 
+	(SELECT DISTINCT customer_id, tip
+    FROM customer_orders
+    WHERE tip > 2);
+# Inner subqueries can only have one column in its SELECT statement
+
+
+SELECT *
+FROM customers
+WHERE total_money_spent > 
+	(SELECT AVG(total_money_spent)
+	FROM customers);
+
+
+-- Practice Question 
+# Using customers, customers orders, and products table - write a 
+# subquery to return the first name and last name of customers who 
+# ordered something with chocolate in it. 
+
+SELECT * 
+FROM customers;
+SELECT * 
+FROM customer_orders;
+SELECT * 
+FROM products;
+
+SELECT first_name, last_name 
+FROM customers
+WHERE customer_id IN 
+	(SELECT customer_id
+	FROM customer_orders co
+	JOIN products p
+		ON co.product_id = p.product_id
+	WHERE p.product_name LIKE '%Chocolate%');
+    
+    
+SELECT first_name, last_name 
+FROM customers
+WHERE customer_id IN 
+	(SELECT customer_id
+	FROM customer_orders co
+    WHERE product_id IN (1001, 1010));
+    
+    
+SELECT DISTINCT first_name, last_name 
+FROM customers c
+JOIN customer_orders co
+	ON c.customer_id = co.customer_id
+WHERE product_id IN 
+	(SELECT product_id
+	FROM products
+	WHERE product_name LIKE '%Chocolate%');
+    
+    
+    
+-- Practice Question 
+# Using the employees table, use a subquery to select the 2nd highest paid employee
+
+SELECT * 
+FROM employees
+ORDER BY salary DESC;
+
+SELECT *
+FROM employees
+WHERE salary IN
+	(SELECT salary
+    FROM employees)
+ORDER BY salary DESC
+LIMIT 1,1;
+
+
+SELECT *
+FROM employees
+WHERE salary IN
+	(SELECT salary
+    FROM employees
+    WHERE salary > 65000 AND  salary < 75000
+    ORDER BY salary DESC);
+
+
+SELECT * 
+FROM employees 
+WHERE salary NOT IN
+	(SELECT MAX(Salary)
+    FROM employees)
+ORDER BY salary DESC
+LIMIT 1; 
+
+
+SELECT * 
+FROM employees 
+WHERE salary NOT IN
+	(SELECT employee_id
+    FROM employees
+    ORDER BY salary DESC)
+LIMIT 1; 
+    
+
+###############################################################
+ANY & ALL in Subquery 
+###############################################################
+
+
+
+# The ANY operator returns true if the comparison is true for any value in the set of values the subquery returns.
+# For example, consider the following SQL statement:
+
+SELECT product_name 
+FROM products 
+WHERE product_price > ANY (SELECT product_price FROM products WHERE supplier_id = 10);
+
+
+# The ALL operator returns true only if the comparison is true for all values in the set of values the subquery returns.
+# For example, consider the following SQL statement:
+
+SELECT product_name 
+FROM products 
+WHERE product_price > ALL (SELECT product_price FROM products WHERE supplier_id = 10);
+
+
+SELECT *
+FROM ordered_items;
+
+SELECT MAX(quantity * unit_price) AS total_order_price
+FROM ordered_items
+WHERE shipper_id = 1; 
+
+SELECT *, (quantity * unit_price) AS total_order_price
+FROM ordered_items
+WHERE (quantity * unit_price) >
+	(SELECT MAX(quantity * unit_price) AS total_order_price
+	FROM ordered_items
+	WHERE shipper_id = 1);
+
+
+SELECT *, (quantity * unit_price) AS total_order_price
+FROM ordered_items
+WHERE (quantity * unit_price) > ALL
+	(SELECT (quantity * unit_price) AS total_order_price
+	FROM ordered_items
+	WHERE shipper_id = 1);
+# Only values in the outer query that greater than ALL the values in the 
+# inner subquery will generate
+    
+
+SELECT *, (quantity * unit_price) AS total_order_price
+FROM ordered_items
+WHERE (quantity * unit_price) > ANY
+	(SELECT (quantity * unit_price) AS total_order_price
+	FROM ordered_items
+	WHERE shipper_id = 1);
+# If the (quantity * unit_price) in the SELECT statement of the outer 
+# subquery is greater than ANY value in the inner subquery, then it 
+# will generate 
+    
+    
+SELECT *, (quantity * unit_price) AS total_order_price
+FROM ordered_items
+WHERE (quantity * unit_price) >= ANY
+	(SELECT (quantity * unit_price) AS total_order_price
+	FROM ordered_items
+	WHERE shipper_id = 1);
+ # You can include >= ANY to generate even more rows
+
+
+###############################################################
+Subqueries in Select and From
+###############################################################
+
+
+# In the SELECT clause: A subquery can be used in the SELECT clause to calculate a value for each row 
+# returned by the outer query.
+
+# Example: 
+
+SELECT customer_name, 
+       (SELECT AVG(order_amount) 
+        FROM orders 
+        WHERE orders.customer_id = customers.customer_id) AS avg_order_amount)
+FROM customers;
+
+
+# In the FROM clause: A subquery can be used in the FROM clause to create a temporary table that can 
+# be used within the scope of the outer query.
+
+# Example:
+
+SELECT customer_id, SUM(order_amount) as total_order_amount
+FROM (SELECT customer_id, order_amount 
+      FROM orders) AS customer_orders)
+GROUP BY customer_id;
+
+
+SELECT product_id, quantity, 
+	(SELECT ROUND(AVG(quantity),0)
+	FROM ordered_items) AS average_quantity
+FROM ordered_items
+ORDER BY product_id;
+
+
+SELECT product_id, 
+quantity, 
+	(SELECT SUM(quantity) FROM ordered_items) AS Sum_of_total,
+    ROUND(quantity/(SELECT SUM(quantity) FROM ordered_items) * 100,2) AS Percentage_of_orders
+FROM ordered_items;
+
+
+SELECT * 
+FROM (
+SELECT product_id, 
+quantity, 
+	(SELECT ROUND(AVG(quantity),0)
+	FROM ordered_items) AS average_quantity
+FROM ordered_items
+ORDER BY product_id) avg_quantity;
+# Subquery Using a FROM clause
+# When creating a derived table, you must give it a name
+
+
+SELECT average_quantity
+FROM (
+SELECT product_id, 
+quantity, 
+	(SELECT ROUND(AVG(quantity),0)
+	FROM ordered_items) AS average_quantity
+FROM ordered_items
+ORDER BY product_id) avg_quantity;
+# In a derived table, you can select the columns from the inner subquery and 
+# use them in the outer subquery.
+
+
+-- Practice Question 
+# Given the customer_orders table, Use a subquery to determine the customers
+# who have made a purchase that was higher than the average total purchase
+# of all the orders. Have the customer_id, order_total, and the average of 
+# order totals in your output. 
+
+SELECT *
+FROM customer_orders;
+
+SELECT 
+customer_id, 
+order_total,
+	(SELECT AVG(order_total) FROM customer_orders) AS average_total_orders
+FROM customer_orders
+WHERE order_total > (SELECT AVG(order_total) FROM customer_orders)
+ORDER BY customer_id;
+
+
+
